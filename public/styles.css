@@ -1,0 +1,437 @@
+:root {
+  color-scheme: light dark;
+
+  --bg: #fbf6ee;
+  --surface: #ffffff;
+  --ink: #1f1b16;
+  --muted: #6b6258;
+  --border: #e4d9c8;
+  --accent: #c2410c;
+  --accent-ink: #ffffff;
+  --accent-soft: #fde8d8;
+  --danger: #b42318;
+
+  /* The result panel imitates a microwave's amber display, so it is dark in both themes. */
+  --display-bg: #1b1208;
+  --display-ink: #ffb000;
+  --display-dim: #7a5c1f;
+  --display-text: #e9c981;
+
+  --radius: 16px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* Dark palette: used when the system is dark and the user hasn't forced light, or when they forced dark. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17130f;
+    --surface: #221c16;
+    --ink: #f6efe4;
+    --muted: #b3a692;
+    --border: #3a3128;
+    --accent: #ff8a4c;
+    --accent-ink: #2a1405;
+    --accent-soft: #3b2616;
+    --danger: #ff8f85;
+    --display-bg: #0e0a05;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #17130f;
+  --surface: #221c16;
+  --ink: #f6efe4;
+  --muted: #b3a692;
+  --border: #3a3128;
+  --accent: #ff8a4c;
+  --accent-ink: #2a1405;
+  --accent-soft: #3b2616;
+  --danger: #ff8f85;
+  --display-bg: #0e0a05;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 1.0625rem/1.4 var(--font);
+}
+
+.app {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+    max(2rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  display: grid;
+  gap: 1rem;
+}
+
+#pkg-form {
+  display: grid;
+  gap: 1rem;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Header ---------- */
+
+h1 {
+  margin: 0.5rem 0 0;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  margin-top: 0.5rem;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.theme-toggle button {
+  min-height: 2.75rem;
+  min-width: 3.4rem;
+  padding: 0 0.7rem;
+  font: 600 0.875rem var(--font);
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+}
+
+.theme-toggle button[aria-pressed="true"] {
+  color: var(--accent-ink);
+  background: var(--accent);
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+/* ---------- Cards and form controls ---------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1rem 1.1rem;
+}
+
+h2 {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.section-title {
+  margin-bottom: 0.5rem;
+}
+
+label,
+legend {
+  display: block;
+  margin: 0.9rem 0 0.35rem;
+  padding: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+h2 + label {
+  margin-top: 0;
+}
+
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.5rem 0.85rem;
+  /* 16px or larger stops iOS Safari from zooming in when a field is focused. */
+  font: inherit;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+}
+
+input:focus {
+  border-color: var(--accent);
+}
+
+input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.field {
+  position: relative;
+}
+
+.field input {
+  padding-right: 3.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  position: absolute;
+  top: 50%;
+  right: 0.9rem;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.duration {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.chip {
+  min-width: 3.6rem;
+  min-height: 2.75rem;
+  padding: 0 0.8rem;
+  font: inherit;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+}
+
+.chip[aria-pressed="true"] {
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.hint {
+  margin: 0.75rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.warning {
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9375rem;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+}
+
+/* ---------- Result display ---------- */
+
+.display {
+  padding: 1.1rem 1rem 1.2rem;
+  text-align: center;
+  color: var(--display-ink);
+  background: var(--display-bg);
+  border-radius: 20px;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 176, 0, 0.14),
+    0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.display-label {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--display-text);
+  opacity: 0.8;
+}
+
+.display-time {
+  margin: 0.15rem 0;
+  font: 700 clamp(3.5rem, 22vw, 5rem) / 1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 22px rgba(255, 176, 0, 0.4);
+}
+
+.display[data-state="idle"] .display-time {
+  color: var(--display-dim);
+  text-shadow: none;
+}
+
+.display-detail {
+  min-height: 1.4em;
+  margin: 0.4rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--display-text);
+}
+
+/* ---------- Buttons ---------- */
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+button {
+  cursor: pointer;
+}
+
+.primary {
+  flex: 1;
+  min-height: 3.25rem;
+  font: 700 1.0625rem var(--font);
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: 0;
+  border-radius: 14px;
+}
+
+.primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.secondary {
+  min-height: 3.25rem;
+  padding: 0 1.25rem;
+  font: 600 1rem var(--font);
+  color: var(--ink);
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+}
+
+.status {
+  min-height: 1.4em;
+  margin: -0.25rem 0 0;
+  color: var(--muted);
+}
+
+/* ---------- Saved packages ---------- */
+
+.saved-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.saved-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.15rem 1rem;
+  align-items: center;
+  padding: 0.9rem 1rem 0.4rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.saved-name {
+  margin: 0;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.saved-meta {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.saved-time {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  margin: 0;
+  padding: 0.45rem 0.7rem;
+  font: 700 1.75rem / 1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--display-ink);
+  background: var(--display-bg);
+  border-radius: 10px;
+}
+
+.saved-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.25rem;
+  margin: 0.2rem -0.6rem 0;
+}
+
+.link {
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  font: 600 0.9375rem var(--font);
+  color: var(--accent);
+  background: none;
+  border: 0;
+}
+
+.link.danger {
+  color: var(--danger);
+}
+
+.foot {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

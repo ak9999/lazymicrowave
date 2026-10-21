@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#c2410c"/>
+  <!-- oven body -->
+  <rect x="88" y="146" width="336" height="224" rx="30" fill="#fff4e6"/>
+  <!-- door window -->
+  <rect x="116" y="174" width="204" height="168" rx="16" fill="#2b1a10"/>
+  <!-- microwaves -->
+  <path d="M155 258 q 21 -34 42 0 t 42 0 t 42 0" fill="none" stroke="#ffb000" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- control panel -->
+  <circle cx="368" cy="214" r="18" fill="#c2410c"/>
+  <rect x="342" y="248" width="52" height="16" rx="8" fill="#c2410c"/>
+  <rect x="342" y="276" width="52" height="16" rx="8" fill="#c2410c"/>
+  <rect x="342" y="304" width="52" height="16" rx="8" fill="#c2410c"/>
+  <!-- feet -->
+  <rect x="124" y="370" width="44" height="18" rx="6" fill="#fff4e6"/>
+  <rect x="344" y="370" width="44" height="18" rx="6" fill="#fff4e6"/>
+</svg>

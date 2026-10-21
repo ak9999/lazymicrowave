@@ -1,0 +1,19 @@
+{
+  "name": "lazymicrowave",
+  "version": "1.0.0",
+  "description": "Convert a package's microwave time to your microwave's wattage. An installable, offline-capable PWA.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.sw.json",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "start": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}
