@@ -1,0 +1,10 @@
+{
+  // The service worker runs in a different global scope than the page, so it gets
+  // its own type environment (WebWorker instead of DOM).
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "WebWorker"]
+  },
+  "include": ["src/sw.ts"],
+  "exclude": []
+}

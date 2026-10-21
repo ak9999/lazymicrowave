@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'"
+    />
+    <title>lazymicrowave</title>
+    <meta name="description" content="Convert a package's microwave time to your microwave's wattage." />
+
+    <meta name="theme-color" content="#fbf6ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#17130f" media="(prefers-color-scheme: dark)" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="lazymicrowave" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./theme.js"></script>
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <div class="title-row">
+          <h1>lazymicrowave</h1>
+          <div id="theme-toggle" class="theme-toggle" role="group" aria-label="Colour theme">
+            <button type="button" data-theme="auto" aria-pressed="true">Auto</button>
+            <button type="button" data-theme="light" aria-pressed="false">Light</button>
+            <button type="button" data-theme="dark" aria-pressed="false">Dark</button>
+          </div>
+        </div>
+        <p class="subtitle">Convert a package's cook time to your microwave.</p>
+      </header>
+
+      <p id="storage-warning" class="warning" role="alert" hidden>
+        This browser isn't letting the app save anything (private mode?). Your wattage and packages will be lost when
+        you close the page.
+      </p>
+
+      <section class="card" aria-labelledby="mw-title">
+        <h2 id="mw-title">Your microwave</h2>
+        <label for="my-watts">Wattage</label>
+        <div class="field">
+          <input id="my-watts" type="number" inputmode="numeric" min="100" max="3000" step="1" placeholder="e.g. 1000" autocomplete="off" />
+          <span class="unit" aria-hidden="true">W</span>
+        </div>
+        <div id="my-chips" class="chips" role="group" aria-label="Common wattages"></div>
+        <p class="hint">Look on the label inside the door or on the back. Compact ovens are often 700&ndash;900&nbsp;W, full-size 1000&ndash;1200&nbsp;W.</p>
+      </section>
+
+      <form id="pkg-form" novalidate>
+        <section class="card" aria-labelledby="pkg-title">
+          <h2 id="pkg-title">The package</h2>
+
+          <label for="pkg-name">Name</label>
+          <input id="pkg-name" type="text" maxlength="60" placeholder="e.g. Mac &amp; cheese cup" autocomplete="off" enterkeyhint="done" />
+
+          <label for="pkg-watts">Wattage the package assumes</label>
+          <div class="field">
+            <input id="pkg-watts" type="number" inputmode="numeric" min="100" max="3000" step="1" placeholder="e.g. 1100" autocomplete="off" />
+            <span class="unit" aria-hidden="true">W</span>
+          </div>
+          <div id="pkg-chips" class="chips" role="group" aria-label="Common wattages"></div>
+
+          <fieldset>
+            <legend>Time on the package</legend>
+            <div class="duration">
+              <div class="field">
+                <input id="pkg-min" type="number" inputmode="numeric" min="0" max="99" step="1" placeholder="0" aria-label="Minutes" autocomplete="off" />
+                <span class="unit" aria-hidden="true">min</span>
+              </div>
+              <div class="field">
+                <input id="pkg-sec" type="number" inputmode="numeric" min="0" max="59" step="1" placeholder="0" aria-label="Seconds" autocomplete="off" />
+                <span class="unit" aria-hidden="true">sec</span>
+              </div>
+            </div>
+          </fieldset>
+        </section>
+
+        <section id="result" class="display" data-state="idle" aria-live="polite" aria-atomic="true">
+          <p class="display-label">Cook for</p>
+          <p id="result-time" class="display-time">--:--</p>
+          <p id="result-detail" class="display-detail"></p>
+        </section>
+
+        <div class="actions">
+          <button id="save" class="primary" type="submit" disabled>Save package</button>
+          <button id="cancel-edit" class="secondary" type="button" hidden>Cancel</button>
+        </div>
+        <p id="status" class="status" role="status"></p>
+      </form>
+
+      <section aria-labelledby="saved-title">
+        <h2 id="saved-title" class="section-title">Saved packages</h2>
+        <p id="empty" class="hint">Nothing saved yet. Fill in a package above and tap Save to keep it handy.</p>
+        <ul id="saved-list" class="saved-list"></ul>
+      </section>
+
+      <footer class="foot">Times are estimates. Stir if you can, and make sure food is steaming hot all the way through.</footer>
+    </main>
+
+    <noscript><p class="warning">This app needs JavaScript.</p></noscript>
+  </body>
+</html>
