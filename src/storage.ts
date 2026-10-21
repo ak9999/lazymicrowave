@@ -33,6 +33,7 @@ export interface KeyValueStorage {
 
 export type ThemePreference = "auto" | "light" | "dark";
 
+/** Type guard: true if `value` is one of the three theme choices. */
 export function isThemePreference(value: unknown): value is ThemePreference {
   return value === "auto" || value === "light" || value === "dark";
 }
@@ -43,13 +44,17 @@ export interface Store {
    * anything entered is lost when the page closes.
    */
   readonly persistent: boolean;
+  /** Your microwave's wattage, or null if none has been saved. */
   getMicrowaveWatts(): number | null;
+  /** Saves your microwave's wattage. Throws a RangeError if it is not a valid wattage. */
   setMicrowaveWatts(watts: number): void;
   /** "auto" follows the system setting. */
   getTheme(): ThemePreference;
+  /** Saves the theme choice. Throws a RangeError if it is not a valid choice. */
   setTheme(theme: ThemePreference): void;
   /** Sorted by name, case-insensitive. */
   listPackages(): SavedPackage[];
+  /** Creates a package, or updates the one with `input.id`. Returns the saved package. */
   savePackage(input: PackageInput): SavedPackage;
   /** Returns false if there was no package with that id. */
   deletePackage(id: string): boolean;
@@ -64,6 +69,7 @@ export const STORAGE_KEYS = {
 
 export const MAX_NAME_LENGTH = 60;
 
+/** A unique id for a new package. Uses a UUID when the browser provides one. */
 export function newId(): string {
   const c = globalThis.crypto;
   // randomUUID only exists in secure contexts (https or localhost).
@@ -71,6 +77,13 @@ export function newId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
+/**
+ * Creates a store backed by `storage`, loading whatever was saved before. Invalid stored
+ * values are ignored. Pass `null` to run without persistence.
+ *
+ * @param now Clock used to timestamp saves. Injected so tests can control it.
+ * @param makeId Generates ids for new packages. Injected so tests can control it.
+ */
 export function createStore(
   storage: KeyValueStorage | null,
   now: () => number = Date.now,
@@ -78,6 +91,7 @@ export function createStore(
 ): Store {
   let persistent = storage !== null;
 
+  /** Reads and parses a key. Returns undefined if it is missing, unreadable, or not JSON. */
   function load(key: string): unknown {
     if (storage === null) return undefined;
     let raw: string | null;
@@ -95,6 +109,7 @@ export function createStore(
     }
   }
 
+  /** Writes `value` as JSON. Failures are swallowed and recorded in `persistent`. */
   function save(key: string, value: unknown): void {
     if (storage === null) return;
     try {

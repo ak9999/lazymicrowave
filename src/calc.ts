@@ -10,14 +10,20 @@ export const MAX_WATTS = 3000;
 /** Longest package time we accept: 99:59. */
 export const MAX_SECONDS = 99 * 60 + 59;
 
+/**
+ * Type guard: true if `value` is an integer wattage within MIN_WATTS..MAX_WATTS.
+ * Takes `unknown` because callers pass untrusted input (parsed localStorage JSON, form values).
+ */
 export function isValidWatts(value: unknown): value is number {
   return typeof value === "number" && Number.isInteger(value) && value >= MIN_WATTS && value <= MAX_WATTS;
 }
 
+/** Type guard: true if `value` is an integer number of seconds from 1 to MAX_SECONDS. */
 export function isValidSeconds(value: unknown): value is number {
   return typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= MAX_SECONDS;
 }
 
+/** Combines minutes and seconds into total seconds. 4 minutes 8 seconds -> 248. */
 export function toSeconds(minutes: number, seconds: number): number {
   return minutes * 60 + seconds;
 }
@@ -51,6 +57,7 @@ export function formatDuration(totalSeconds: number): string {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
+/** Throws a RangeError naming `label` if `value` is not a valid wattage. */
 function assertWatts(value: number, label: string): void {
   if (!isValidWatts(value)) {
     throw new RangeError(`${label} must be an integer from ${MIN_WATTS} to ${MAX_WATTS}, got ${value}`);

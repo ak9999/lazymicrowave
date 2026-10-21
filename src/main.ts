@@ -16,6 +16,7 @@ const PRESET_WATTS = [600, 700, 800, 900, 1000, 1100, 1200];
 
 // ---------- Elements ----------
 
+/** Looks up an element by id. Throws if it is missing, so a broken index.html fails loudly. */
 function byId<T extends HTMLElement>(id: string): T {
   const node = document.getElementById(id);
   if (node === null) throw new Error(`Missing #${id} in index.html`);
@@ -43,6 +44,7 @@ const themeButtons = document.querySelectorAll<HTMLButtonElement>("#theme-toggle
 
 // ---------- State ----------
 
+/** Returns localStorage if it can be written to, otherwise null (the app then runs without saving). */
 function openStorage(): KeyValueStorage | null {
   try {
     const storage = window.localStorage;
@@ -63,11 +65,13 @@ let editingId: string | null = null;
 
 type FieldRead = { ok: true; value: number } | { ok: false; reason: "empty" | "invalid" };
 
+/** True if the field is empty. A field with unparseable text (like "e") is not blank. */
 function isBlank(input: HTMLInputElement): boolean {
   // A number input holding text like "e" reports value "" but validity.badInput.
   return input.value.trim() === "" && !input.validity.badInput;
 }
 
+/** Reads a wattage field, reporting whether it is empty, invalid, or a usable value. */
 function readWatts(input: HTMLInputElement): FieldRead {
   if (isBlank(input)) return { ok: false, reason: "empty" };
   const n = input.valueAsNumber;
@@ -89,6 +93,7 @@ function readDuration(): FieldRead {
   return isValidSeconds(total) ? { ok: true, value: total } : { ok: false, reason: "invalid" };
 }
 
+/** The message to show for the first field that is not ready, or "" if all are. */
 function firstProblem(mw: FieldRead, pw: FieldRead, duration: FieldRead): string {
   if (!mw.ok) {
     return mw.reason === "empty"
@@ -110,6 +115,7 @@ function firstProblem(mw: FieldRead, pw: FieldRead, duration: FieldRead): string
 
 // ---------- Rendering ----------
 
+/** Recomputes the converted time from the form fields and updates the result panel and Save button. */
 function renderResult(): void {
   const mw = readWatts(myWattsInput);
   const pw = readWatts(pkgWattsInput);
@@ -135,6 +141,7 @@ function renderResult(): void {
   syncChips(pkgChips, pw.ok ? pw.value : null);
 }
 
+/** Adds the preset wattage buttons to `container`. Clicking one fills `input`. */
 function renderChips(container: HTMLElement, input: HTMLInputElement): void {
   for (const watts of PRESET_WATTS) {
     const chip = document.createElement("button");
@@ -152,12 +159,14 @@ function renderChips(container: HTMLElement, input: HTMLInputElement): void {
   }
 }
 
+/** Marks the chip matching `selected` as pressed and the others as not pressed. */
 function syncChips(container: HTMLElement, selected: number | null): void {
   for (const chip of container.querySelectorAll<HTMLButtonElement>(".chip")) {
     chip.setAttribute("aria-pressed", String(chip.dataset["watts"] === String(selected)));
   }
 }
 
+/** Redraws the saved packages list, or shows the empty hint if there are none. */
 function renderList(): void {
   const mw = readWatts(myWattsInput);
   const packages = store.listPackages();
@@ -165,6 +174,7 @@ function renderList(): void {
   savedList.replaceChildren(...packages.map((p) => renderItem(p, mw.ok ? mw.value : null)));
 }
 
+/** Builds one list entry for a saved package. `myWatts` is null when your wattage is unknown. */
 function renderItem(pkg: SavedPackage, myWatts: number | null): HTMLLIElement {
   const li = document.createElement("li");
   li.className = "saved-item";
@@ -201,6 +211,7 @@ function renderItem(pkg: SavedPackage, myWatts: number | null): HTMLLIElement {
   return li;
 }
 
+/** Creates a button with a visible label, an accessible name, and a click handler. */
 function textButton(label: string, className: string, ariaLabel: string, onClick: () => void): HTMLButtonElement {
   const button = document.createElement("button");
   button.type = "button";
@@ -213,6 +224,7 @@ function textButton(label: string, className: string, ariaLabel: string, onClick
 
 let statusTimer: number | undefined;
 
+/** Shows a short message in the status line. It clears itself after 4 seconds. */
 function setStatus(message: string): void {
   statusEl.textContent = message;
   window.clearTimeout(statusTimer);
@@ -221,6 +233,7 @@ function setStatus(message: string): void {
   }, 4000);
 }
 
+/** Shows the "changes won't be saved" warning when the store is not persisting. */
 function renderStorageWarning(): void {
   storageWarning.hidden = store.persistent;
 }
@@ -230,6 +243,10 @@ function renderStorageWarning(): void {
 /** Mirrors the theme-color tags in index.html. */
 const THEME_COLORS = { light: "#fbf6ee", dark: "#17130f" } as const;
 
+/**
+ * Sets the page theme. "auto" removes the override so the system setting applies.
+ * Also updates the browser toolbar colour and the theme toggle's pressed state.
+ */
 function applyTheme(theme: ThemePreference): void {
   const root = document.documentElement;
   if (theme === "auto") delete root.dataset["theme"];
@@ -248,6 +265,7 @@ function applyTheme(theme: ThemePreference): void {
 
 // ---------- Actions ----------
 
+/** Saves the form as a new package, or as an update if one is being edited. Does nothing if the form is invalid. */
 function savePackage(): void {
   const pw = readWatts(pkgWattsInput);
   const duration = readDuration();
@@ -265,6 +283,7 @@ function savePackage(): void {
   navigator.storage?.persist?.().catch(() => undefined);
 }
 
+/** Fills the form with a saved package so it can be changed, then scrolls to the form. */
 function startEdit(pkg: SavedPackage): void {
   editingId = pkg.id;
   nameInput.value = pkg.name;
@@ -279,6 +298,7 @@ function startEdit(pkg: SavedPackage): void {
   form.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
 }
 
+/** Deletes a package after the user confirms. Clears the form if it was being edited. */
 function deletePackage(pkg: SavedPackage): void {
   if (!window.confirm(`Delete “${pkg.name}”?`)) return;
   store.deletePackage(pkg.id);
@@ -288,6 +308,7 @@ function deletePackage(pkg: SavedPackage): void {
   setStatus(`Deleted “${pkg.name}”.`);
 }
 
+/** Clears the package form and returns it to "create new" mode. */
 function resetForm(): void {
   editingId = null;
   nameInput.value = "";

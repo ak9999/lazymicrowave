@@ -49,6 +49,10 @@ sw.addEventListener("fetch", (event) => {
   event.respondWith(respond(request));
 });
 
+/**
+ * Serves a GET request from the cache, falling back to the network. If the network
+ * fails on a page load, serves the cached app shell so the app still opens offline.
+ */
 async function respond(request: Request): Promise<Response> {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request, { ignoreSearch: true });

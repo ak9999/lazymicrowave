@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 
 import { STORAGE_KEYS, createStore, type KeyValueStorage } from "../src/storage.ts";
 
+/** An in-memory KeyValueStorage. `data` exposes the raw contents so tests can inspect them. */
 function memoryStorage(initial: Record<string, string> = {}): KeyValueStorage & { data: Map<string, string> } {
   const data = new Map(Object.entries(initial));
   return {
@@ -12,6 +13,7 @@ function memoryStorage(initial: Record<string, string> = {}): KeyValueStorage & 
   };
 }
 
+/** Returns an id generator that yields "id-1", "id-2", and so on, for predictable test output. */
 const sequentialIds = () => {
   let n = 0;
   return () => `id-${++n}`;

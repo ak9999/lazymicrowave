@@ -26,6 +26,7 @@ const TYPES = {
   ".png": "image/png",
 };
 
+/** Serves files from dist/. Directories map to their index.html; unknown paths get a 404. */
 createServer(async (req, res) => {
   try {
     const { pathname } = new URL(req.url ?? "/", "http://localhost");

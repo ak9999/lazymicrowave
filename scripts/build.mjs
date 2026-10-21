@@ -14,6 +14,7 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const dist = join(root, "dist");
 
+/** Runs a command from the project root and exits the build if it fails. */
 function run(command, args) {
   const result = spawnSync(command, args, { cwd: root, stdio: "inherit" });
   if (result.error) {
@@ -24,6 +25,7 @@ function run(command, args) {
   if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
+/** Returns the paths of every file under `dir`, including files in subfolders. */
 function listFiles(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name);
